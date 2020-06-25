@@ -20,7 +20,7 @@ This repo contains:
 - Run the app and follow the on-screen instructions
 
 ## How to Run skadnetwork_server.py
-- Place your private key in the same directory as the server in file called `key.pem`
+- Place your private key in the same directory as the server in a file called `key.pem`
 - `cd skadnetwork-server`
 - `pip install -r requirements.txt` (make sure you are using python3)
 - `python skadnetwork_server.py`
