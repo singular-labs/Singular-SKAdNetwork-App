@@ -22,10 +22,12 @@ NSString * const REQUEST_SOURCE_APP_ID_KEY = @"source_app_id";
 NSString * const REQUEST_SKADNETWORK_VERSION_KEY = @"skadnetwork_version";
 
 // Ad Request Values
-NSString * const REQUEST_AD_SERVER_ADDRESS = @"http://<ENTER_YOU_SERVER_IP_HERE>:8000/get-ad-impression";
 NSString * const REQUEST_SOURCE_APP_ID = @"<ENTER_SOURCE_APP_ID_HERE>";
 NSString * const REQUEST_SKADNETWORK_V1 = @"1.0";
 NSString * const REQUEST_SKADNETWORK_V2 = @"2.0";
+
+// We use http for local tests, use https in production.
+NSString * const REQUEST_AD_SERVER_ADDRESS = @"http://<ENTER_YOU_SERVER_IP_HERE>:8000/get-ad-impression";
 
 // Ad Response Keys - These are the same as our server, but real Ad Networks may return different keys.
 NSString * const RESPONSE_AD_NETWORK_ID_KEY = @"adNetworkId";
@@ -42,7 +44,7 @@ NSString * const RESPONSE_NONCE_KEY = @"nonce";
 }
 
 - (IBAction)showAdClick:(id)sender {
-    // Step 1: Retrieving ad data from a python server to imitate a real Ad Network.
+    // Step 1: Retrieving ad data from a python server simulating a real Ad Network API.
     // Our server uses the adnetwork key to sign the ad payload.
     // For more information please check out the skadnetwork_server folder in the repo.
     [self getProductDataFromServer];
@@ -70,31 +72,32 @@ NSString * const RESPONSE_NONCE_KEY = @"nonce";
         }
         
         // Step 2: Parsing the data that we got from the Ad Network to fit the `loadProductWithParameters` format in the AdController.
-        NSDictionary* productData = [self parseResponseData:data];
+        NSDictionary* productParameters = [self parseResponseDataToProductParameters:data];
         
-        if (!productData){
+        if (!productParameters){
             return;
         }
         
         // Step 3: Show the AdController with the product data we got from the Ad Network.
-        [self loadProductFromResponseData:productData];
+        [self loadProductFromResponseData:productParameters];
     }] resume];
 }
 
-- (void)loadProductFromResponseData:(NSDictionary*)productData {
-    if (!productData){
+- (void)loadProductFromResponseData:(NSDictionary*)productParameters {
+    if (!productParameters){
         return;
     }
     
-    // Initializing and showing the AdController with the product data.
+    // Initializing and showing the AdController with the product parameters.
     // Check out the `viewDidLoad` method in the AdController for the next step.
     dispatch_async(dispatch_get_main_queue(), ^{
-        AdController* adController = [[AdController alloc] initWithProductData:productData];
+        AdController* adController = [[AdController alloc] initWithProductParameters:productParameters];
         [self showViewController:adController sender:self];
     });
 }
 
-- (NSDictionary*)parseResponseData:(NSData*)data{
+// This function take the server's response and convert it to the loadProductWithParameters format.
+- (NSDictionary*)parseResponseDataToProductParameters:(NSData*)data{
     if (!data){
         return nil;
     }
@@ -109,29 +112,31 @@ NSString * const RESPONSE_NONCE_KEY = @"nonce";
         return nil;
     }
     
-    NSMutableDictionary* productData = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary* productParameters = [[NSMutableDictionary alloc] init];
     
     NSString* skAdNetworkVersion = [responseData objectForKey:RESPONSE_SKADNETWORK_VERSION_KEY];
     
+    // Don't forget to import <StoreKit/SKAdNetwork.h> to have access to the SKAdnetwork consts
+    
     // These product params should be of NSString* type.
-    [productData setObject:[responseData objectForKey:RESPONSE_SIGNATURE_KEY] forKey:SKStoreProductParameterAdNetworkAttributionSignature];
-    [productData setObject:[responseData objectForKey:RESPONSE_TARGET_APP_ID_KEY] forKey:SKStoreProductParameterITunesItemIdentifier];
-    [productData setObject:skAdNetworkVersion forKey:SKStoreProductParameterAdNetworkVersion];
+    [productParameters setObject:[responseData objectForKey:RESPONSE_SIGNATURE_KEY] forKey:SKStoreProductParameterAdNetworkAttributionSignature];
+    [productParameters setObject:[responseData objectForKey:RESPONSE_TARGET_APP_ID_KEY] forKey:SKStoreProductParameterITunesItemIdentifier];
+    [productParameters setObject:skAdNetworkVersion forKey:SKStoreProductParameterAdNetworkVersion];
     
     // These product params should be of NSNumber* type.
-    [productData setObject:@([[responseData objectForKey:RESPONSE_CAMPAIGN_ID_KEY] intValue]) forKey:SKStoreProductParameterAdNetworkCampaignIdentifier];
-    [productData setObject:@([[responseData objectForKey:RESPONSE_TIMESTAMP_KEY] intValue]) forKey:SKStoreProductParameterAdNetworkTimestamp];
+    [productParameters setObject:@([[responseData objectForKey:RESPONSE_CAMPAIGN_ID_KEY] intValue]) forKey:SKStoreProductParameterAdNetworkCampaignIdentifier];
+    [productParameters setObject:@([[responseData objectForKey:RESPONSE_TIMESTAMP_KEY] intValue]) forKey:SKStoreProductParameterAdNetworkTimestamp];
     
     // These product params are only included in SKAdNetwork version 2.0
     if ([skAdNetworkVersion isEqualToString:REQUEST_SKADNETWORK_V2]) {
-        [productData setObject:[responseData objectForKey:RESPONSE_AD_NETWORK_ID_KEY] forKey:SKStoreProductParameterAdNetworkIdentifier];
-        [productData setObject:@([[responseData objectForKey:RESPONSE_SOURCE_APP_ID_KEY] intValue]) forKey:SKStoreProductParameterAdNetworkSourceAppStoreIdentifier];
+        [productParameters setObject:[responseData objectForKey:RESPONSE_AD_NETWORK_ID_KEY] forKey:SKStoreProductParameterAdNetworkIdentifier];
+        [productParameters setObject:@([[responseData objectForKey:RESPONSE_SOURCE_APP_ID_KEY] intValue]) forKey:SKStoreProductParameterAdNetworkSourceAppStoreIdentifier];
     }
     
     // This param has to be of NSUUID type, an exception is thrown if it is passed in NSString* type.
-    [productData setObject:[[NSUUID alloc] initWithUUIDString:[responseData objectForKey:RESPONSE_NONCE_KEY]] forKey:SKStoreProductParameterAdNetworkNonce];
+    [productParameters setObject:[[NSUUID alloc] initWithUUIDString:[responseData objectForKey:RESPONSE_NONCE_KEY]] forKey:SKStoreProductParameterAdNetworkNonce];
     
-    return productData;
+    return productParameters;
 }
 
 - (IBAction)showSingularClick:(id)sender {

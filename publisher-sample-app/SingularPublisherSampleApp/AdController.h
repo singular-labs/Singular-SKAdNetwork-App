@@ -13,10 +13,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface AdController : SKStoreProductViewController {
-    NSDictionary* productData;
+    NSDictionary* productParameters;
 }
 
-- (id)initWithProductData:(NSDictionary*)productData;
+- (id)initWithProductParameters:(NSDictionary*)productParameters;
 @end
 
 NS_ASSUME_NONNULL_END
