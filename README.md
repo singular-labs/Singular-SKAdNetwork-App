@@ -1,4 +1,4 @@
-# Singular-SKAdnetwork-App
+# Singular-SKAdNetwork-App
 Sample Apps demonstrating the logic needed to implement SKAdNetwork as an ad network, publisher and advertiser.
 
 This repo contains:
