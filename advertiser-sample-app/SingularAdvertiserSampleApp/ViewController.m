@@ -60,7 +60,7 @@
 }
 
 - (IBAction)showSingularClick:(id)sender {
-    NSURL* singular = [NSURL URLWithString:@"https://www.singular.net?utm_medium=sample-app&utm_source=sample-app"];
+    NSURL* singular = [NSURL URLWithString:@"https://www.singular.net?utm_medium=sample-app&utm_source=sample-app-advertiser"];
     
     if( [[UIApplication sharedApplication] canOpenURL:singular]){
         [[UIApplication sharedApplication] openURL:singular options:[[NSDictionary alloc] init] completionHandler:nil];
