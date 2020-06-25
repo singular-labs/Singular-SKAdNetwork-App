@@ -56,6 +56,7 @@
     // Please note that calling `updateConversionValue` is only effective in the first 24 hours since `registerAppForAdNetworkAttribution` is first called.
     // Any calls after 24 hours will not update the conversion value in the attribution notification.
     [SKAdNetwork updateConversionValue:3];
+    [self alertConvertionValueUpdated];
 }
 
 - (IBAction)showSingularClick:(id)sender {
@@ -64,6 +65,18 @@
     if( [[UIApplication sharedApplication] canOpenURL:singular]){
         [[UIApplication sharedApplication] openURL:singular options:[[NSDictionary alloc] init] completionHandler:nil];
     }
+}
+
+- (void)alertConvertionValueUpdated {
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Convertion Value Updated!"
+                                                                   message:nil
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {}];
+    
+    [alert addAction:defaultAction];
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 - (void)alertTrackingConsentIsAlreadySet {
