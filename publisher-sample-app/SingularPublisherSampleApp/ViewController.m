@@ -18,13 +18,11 @@
 @implementation ViewController
 
 // Ad Request Keys
-NSString * const REQUEST_AD_NETWORK_ID_KEY = @"adnetwork_id";
 NSString * const REQUEST_SOURCE_APP_ID_KEY = @"source_app_id";
 NSString * const REQUEST_SKADNETWORK_VERSION_KEY = @"skadnetwork_version";
 
 // Ad Request Values
 NSString * const REQUEST_AD_SERVER_ADDRESS = @"http://<ENTER_YOU_SERVER_IP_HERE>:8000/get-ad-impression";
-NSString * const REQUEST_AD_NETWORK_ID = @"<ENTER_AD_NETWORK_ID_HERE>"; // This should also be defined in the plist.info, search for <ENTER_AD_NETWORK_ID_HERE> there.
 NSString * const REQUEST_SOURCE_APP_ID = @"<ENTER_SOURCE_APP_ID_HERE>";
 NSString * const REQUEST_SKADNETWORK_V1 = @"1.0";
 NSString * const REQUEST_SKADNETWORK_V2 = @"2.0";
@@ -53,7 +51,6 @@ NSString * const RESPONSE_NONCE_KEY = @"nonce";
 - (void)getProductDataFromServer {
     // Building the URL for the GET request to the server
     NSURLComponents *components = [NSURLComponents componentsWithString:REQUEST_AD_SERVER_ADDRESS];
-    NSURLQueryItem *adNetworkId = [NSURLQueryItem queryItemWithName:REQUEST_AD_NETWORK_ID_KEY value:REQUEST_AD_NETWORK_ID];
     NSURLQueryItem *sourceAppId = [NSURLQueryItem queryItemWithName:REQUEST_SOURCE_APP_ID_KEY value:REQUEST_SOURCE_APP_ID];
     
     // The Ad Network needs to generate different signature according to the SKAdNetwork version.
@@ -63,7 +60,7 @@ NSString * const RESPONSE_NONCE_KEY = @"nonce";
                                           queryItemWithName:REQUEST_SKADNETWORK_VERSION_KEY
                                           value:osVersion < 14 ? REQUEST_SKADNETWORK_V1 : REQUEST_SKADNETWORK_V2];
     
-    components.queryItems = @[ skAdNetworkVersion, adNetworkId, sourceAppId ];
+    components.queryItems = @[ skAdNetworkVersion, sourceAppId ];
     
     // Sending an Async GET request to the server to get the Ad data.
     [[[NSURLSession sharedSession] dataTaskWithURL:components.URL
