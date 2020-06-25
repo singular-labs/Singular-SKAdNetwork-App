@@ -7,6 +7,8 @@ from ecdsa_wrapper import ECDSA
 
 app = Flask(__name__)
 
+# This script simulates the signing operation that should be implemented by the AdNetwork in their API. 
+
 # noinspection PyBroadException
 try:
     # The key.pem should be in the same directory as this server script
