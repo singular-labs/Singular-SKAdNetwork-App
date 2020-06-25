@@ -8,7 +8,7 @@
 #import "ViewController.h"
 #import "AdController.h"
 
-// Don't forget to add this to have access to the SKAdnetwork consts
+// Don't forget to import this to have access to the SKAdnetwork consts
 #import <StoreKit/SKAdNetwork.h>
 
 @interface ViewController ()
