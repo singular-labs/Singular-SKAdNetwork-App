@@ -20,7 +20,10 @@
     
     // The first call to registerAppForAdNetworkAttribution generates the notification if the device has attribution data for that app.
     // It's best to call this method as soon as possible, that's why we call it from didFinishLaunchingWithOptions.
-    // When the app is opened from the first time and this method is called, it starts a 24-hour timer until an attribution notification is sent to the Ad Network.
+
+    // When the app is opened for the first time and this method is called, it starts a 24-hour timer, any subsequent calls to updateCovnersionValue reset this timer.
+    // once the first 24h timer ends, after a randomized period of time the attribution notification will be sent to the ad network.
+
     [SKAdNetwork registerAppForAdNetworkAttribution];
     
     return YES;
