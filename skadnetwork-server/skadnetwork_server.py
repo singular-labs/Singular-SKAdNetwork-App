@@ -7,7 +7,7 @@ from ecdsa_wrapper import ECDSA
 
 app = Flask(__name__)
 
-# This script simulates the signing operation that should be implemented by the AdNetwork in their API. 
+# This script simulates the signing operation that should be implemented by the Ad Network in their API. 
 
 # noinspection PyBroadException
 try:
@@ -19,7 +19,7 @@ except Exception:
 
 ADNET_ID = u'<ENTER_AD_NETWORK_ID_HERE>'
 CAMPAIGN_ID = u'<ENTER_CAMPAIGN_ID_HERE>'  # Should be between 1-100
-TARGET_ITUNES_ID = u'<ENTER_TARGET_APP_ID_HERE>' # The prouduct you want to advertise
+TARGET_ITUNES_ID = u'<ENTER_TARGET_APP_ID_HERE>' # The product you want to advertise
 SIGNATURE_SEPARATOR = u'\u2063'  # This separator is required to generate a valid signature
 SKADNETWORK_1_VERSION = u'1.0'
 SKADNETWORK_2_VERSION = u'2.0'
