@@ -24,15 +24,14 @@
 }
 
 - (IBAction)showTrackingConsentDialog:(id)sender {
-    // If the tracking authorization status is other than not determined, this means that the Tracking Consent dialog has already been shown.
-    // The `trackingAuthorizationStatus` persists the result of the Tracking Consent dialog and can only be changed through the iOS settings screen.
-    // Tracking Consent dialog is only shown once per install, meaning that calling `requestTrackingAuthorizationWithCompletionHandler` won't show the dialog again.
-    if ([ATTrackingManager trackingAuthorizationStatus] != ATTrackingManagerAuthorizationStatusNotDetermined){
-        [self alertTrackingConsentIsAlreadySet];
-    }
-    
     // Checking the OS version before calling the Tracking Consent dialog, it's available only in iOS 14 and above
     if (@available(iOS 14, *)) {
+        // If the tracking authorization status is other than not determined, this means that the Tracking Consent dialog has already been shown.
+        // The `trackingAuthorizationStatus` persists the result of the Tracking Consent dialog and can only be changed through the iOS settings screen.
+        // Tracking Consent dialog is only shown once per install, meaning that calling `requestTrackingAuthorizationWithCompletionHandler` won't show the dialog again.
+        if ([ATTrackingManager trackingAuthorizationStatus] != ATTrackingManagerAuthorizationStatusNotDetermined){
+            [self alertTrackingConsentIsAlreadySet];
+        }
         
         // Before showing the Tracking Consent dialog, you'll need to add the `Privacy - Tracking Usage Description` to your app's info.plist.
         // If you don't add it, an exception will be thrown.
