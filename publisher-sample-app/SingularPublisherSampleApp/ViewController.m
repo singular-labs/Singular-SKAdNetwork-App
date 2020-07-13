@@ -114,23 +114,27 @@ NSString * const RESPONSE_NONCE_KEY = @"nonce";
     
     NSMutableDictionary* productParameters = [[NSMutableDictionary alloc] init];
     
-    NSString* skAdNetworkVersion = [responseData objectForKey:RESPONSE_SKADNETWORK_VERSION_KEY];
+    
     
     // Don't forget to import <StoreKit/SKAdNetwork.h> to have access to the SKAdnetwork consts
     
     // These product params should be of NSString* type.
     [productParameters setObject:[responseData objectForKey:RESPONSE_SIGNATURE_KEY] forKey:SKStoreProductParameterAdNetworkAttributionSignature];
     [productParameters setObject:[responseData objectForKey:RESPONSE_TARGET_APP_ID_KEY] forKey:SKStoreProductParameterITunesItemIdentifier];
-    [productParameters setObject:skAdNetworkVersion forKey:SKStoreProductParameterAdNetworkVersion];
+    [productParameters setObject:[responseData objectForKey:RESPONSE_AD_NETWORK_ID_KEY] forKey:SKStoreProductParameterAdNetworkIdentifier];
     
     // These product params should be of NSNumber* type.
     [productParameters setObject:@([[responseData objectForKey:RESPONSE_CAMPAIGN_ID_KEY] intValue]) forKey:SKStoreProductParameterAdNetworkCampaignIdentifier];
     [productParameters setObject:@([[responseData objectForKey:RESPONSE_TIMESTAMP_KEY] intValue]) forKey:SKStoreProductParameterAdNetworkTimestamp];
     
-    // These product params are only included in SKAdNetwork version 2.0
-    if ([skAdNetworkVersion isEqualToString:REQUEST_SKADNETWORK_V2]) {
-        [productParameters setObject:[responseData objectForKey:RESPONSE_AD_NETWORK_ID_KEY] forKey:SKStoreProductParameterAdNetworkIdentifier];
-        [productParameters setObject:@([[responseData objectForKey:RESPONSE_SOURCE_APP_ID_KEY] intValue]) forKey:SKStoreProductParameterAdNetworkSourceAppStoreIdentifier];
+    if (@available(iOS 14, *)) {
+        NSString* skAdNetworkVersion = [responseData objectForKey:RESPONSE_SKADNETWORK_VERSION_KEY];
+        
+        // These product params are only included in SKAdNetwork version 2.0
+        if ([skAdNetworkVersion isEqualToString:REQUEST_SKADNETWORK_V2]) {
+            [productParameters setObject:skAdNetworkVersion forKey:SKStoreProductParameterAdNetworkVersion];
+            [productParameters setObject:@([[responseData objectForKey:RESPONSE_SOURCE_APP_ID_KEY] intValue]) forKey:SKStoreProductParameterAdNetworkSourceAppStoreIdentifier];
+        }
     }
     
     // This param has to be of NSUUID type, an exception is thrown if it is passed in NSString* type.
