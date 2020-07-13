@@ -35,7 +35,7 @@ def get_skadnetwork_parameters():
     # In SKAdNetwork Version '1.0' we use less parameters to generate a signature
     if skadnet_version == SKADNETWORK_1_VERSION:
         fields = [
-            SKADNETWORK_1_VERSION,
+            ADNET_ID,
             CAMPAIGN_ID,
             TARGET_ITUNES_ID,
             nonce,
