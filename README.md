@@ -20,12 +20,17 @@ This repo contains:
 - Run the app and follow the on-screen instructions
 
 ## How to Run skadnetwork_server.py
-- Place your private key in the same directory as the server in a file called `key.pem`
+- Place your private key (see below on how to generate it) in the same directory as the server in a file called `key.pem`
 - `cd skadnetwork-server`
 - `pip install -r requirements.txt` (make sure you are using python3)
 - `python skadnetwork_server.py`
 
 Now you should have a server listening on port 8000 that serves ad network responses to the publisher sample app.
+
+## How to generate your public-private key pair
+- SKAdNetwork uses an ECDSA keypair with the `prime192v1` curve, generate it by using:\
+`openssl ecparam -name prime192v1 -genkey -noout -out companyname_skadnetwork_private_key.pem`
+- For more details see Apple's instructions here: https://developer.apple.com/documentation/storekit/skadnetwork/registering_an_ad_network
 \
 \
 \
