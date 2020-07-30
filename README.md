@@ -30,7 +30,8 @@ Now you should have a server listening on port 8000 that serves ad network respo
 ## How to generate your public-private key pair
 - SKAdNetwork uses an ECDSA keypair with the `prime192v1` curve, generate it by using:\
 `openssl ecparam -name prime192v1 -genkey -noout -out companyname_skadnetwork_private_key.pem`
-- For more details see Apple's instructions here: https://developer.apple.com/documentation/storekit/skadnetwork/registering_an_ad_network
+- For more details see Apple's instructions [Here](https://developer.apple.com/documentation/storekit/skadnetwork/registering_an_ad_network)
+
 \
 \
 \
