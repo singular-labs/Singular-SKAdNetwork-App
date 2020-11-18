@@ -12,7 +12,7 @@ class ECDSA(object):
     """
     a light wrapper around Anton Kueltz's FastECDSA library
     """
-    CURVE = fe_curve.P256
+    CURVE = fe_curve.P192
     SIGRAW = 0   # signature format raw
     SIGB64 = 1   # ...base 64
     SIGHEX = 2   # ...hex
