@@ -125,7 +125,7 @@ NSString * const RESPONSE_NONCE_KEY = @"nonce";
     
     // These product params should be of NSNumber* type.
     [productParameters setObject:@([[responseData objectForKey:RESPONSE_CAMPAIGN_ID_KEY] intValue]) forKey:SKStoreProductParameterAdNetworkCampaignIdentifier];
-    [productParameters setObject:@([[responseData objectForKey:RESPONSE_TIMESTAMP_KEY] longLongValue]) forKey:SKStoreProductParameterAdNetworkTimestamp];
+    [productParameters setObject:@([[responseData objectForKey:RESPONSE_TIMESTAMP_KEY] intValue]) forKey:SKStoreProductParameterAdNetworkTimestamp];
     
     if (@available(iOS 14, *)) {
         NSString* skAdNetworkVersion = [responseData objectForKey:RESPONSE_SKADNETWORK_VERSION_KEY];
