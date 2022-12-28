@@ -20,9 +20,12 @@ except Exception:
 ADNET_ID = u'<ENTER_AD_NETWORK_ID_HERE>'
 CAMPAIGN_ID = u'<ENTER_CAMPAIGN_ID_HERE>'  # Should be between 1-100
 TARGET_ITUNES_ID = u'<ENTER_TARGET_APP_ID_HERE>' # The product you want to advertise
+SOURCE_IDENTIFIER = u'<ENTER_SOURCE_IDENTIFIER_HERE>'  # A number between 1-9999
+FIDELITY_TYPE = '1'  # 1 for StoreKit-rendered ads (clicks)
 SIGNATURE_SEPARATOR = u'\u2063'  # This separator is required to generate a valid signature
 SKADNETWORK_1_VERSION = u'1.0'
 SKADNETWORK_2_VERSION = u'2.0'
+SKADNETWORK_4_VERSION = u'4.0'
 
 
 @app.route('/get-ad-impression', methods=['GET'])
@@ -51,6 +54,18 @@ def get_skadnetwork_parameters():
             source_app_id,
             timestamp,
         ]
+    elif skadnet_version == SKADNETWORK_4_VERSION:
+    # https://developer.apple.com/documentation/storekit/skadnetwork/generating_the_signature_to_validate_storekit-rendered_ads
+        fields = [
+            SKADNETWORK_VERSION,
+            ADNET_ID,
+            SOURCE_IDENTIFIER,
+            TARGET_ITUNES_ID,
+            nonce,
+            source_app_id,
+            FIDELITY_TYPE,
+            timestamp,
+        ]
     else:
         return jsonify({'error': 'unsupported protocol version'}), 400
 
@@ -67,6 +82,8 @@ def get_skadnetwork_parameters():
         'sourceAppId': source_app_id,
         'id': TARGET_ITUNES_ID,
         'adNetworkVersion': skadnet_version,
+        'fidelityType': FIDELITY_TYPE,
+        'sourceIdentifier': SOURCE_IDENTIFIER,
     })
 
 
