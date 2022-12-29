@@ -99,7 +99,6 @@ def get_skadnetwork_parameters():
         'sourceAppId': source_app_id,
         'id': TARGET_ITUNES_ID,
         'adNetworkVersion': skadnet_version,
-        'fidelityType': FIDELITY_TYPE,
         'sourceIdentifier': SOURCE_IDENTIFIER,
     })
 
