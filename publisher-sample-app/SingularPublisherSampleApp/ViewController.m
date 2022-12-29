@@ -25,6 +25,7 @@ NSString * const REQUEST_SKADNETWORK_VERSION_KEY = @"skadnetwork_version";
 NSString * const REQUEST_SOURCE_APP_ID = @"<ENTER_SOURCE_APP_ID_HERE>";
 NSString * const REQUEST_SKADNETWORK_V1 = @"1.0";
 NSString * const REQUEST_SKADNETWORK_V2 = @"2.0";
+NSString * const REQUEST_SKADNETWORK_V22 = @"2.2";
 NSString * const REQUEST_SKADNETWORK_V3 = @"3.0";
 NSString * const REQUEST_SKADNETWORK_V4 = @"4.0";
 
@@ -54,9 +55,11 @@ NSString * skanVersion = nil;
 
     if (osVersion < 14){
         skanVersion = REQUEST_SKADNETWORK_V1;
-    } else if (osVersion < 15){
+    } else if (osVersion < 14.5){
         skanVersion = REQUEST_SKADNETWORK_V2;
-    } else if (osVersion < 16){
+    } else if (osVersion < 14.6){
+        skanVersion = REQUEST_SKADNETWORK_V22;
+    } else if (osVersion < 16.1){
         skanVersion = REQUEST_SKADNETWORK_V3;
     } else {
         skanVersion = REQUEST_SKADNETWORK_V4;
