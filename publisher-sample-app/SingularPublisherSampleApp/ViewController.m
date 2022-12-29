@@ -44,8 +44,6 @@ NSString * const RESPONSE_NONCE_KEY = @"nonce";
 NSString * const RESPONSE_SOURCE_IDENTIFIER_KEY = @"sourceIdentifier";
 NSString * skanVersion = nil;
 
-
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     // The Ad Network needs to generate different signature according to the SKAdNetwork version.
@@ -76,8 +74,6 @@ NSString * skanVersion = nil;
     // Building the URL for the GET request to the server
     NSURLComponents *components = [NSURLComponents componentsWithString:REQUEST_AD_SERVER_ADDRESS];
     NSURLQueryItem *sourceAppId = [NSURLQueryItem queryItemWithName:REQUEST_SOURCE_APP_ID_KEY value:REQUEST_SOURCE_APP_ID];
-    
-
     
     NSURLQueryItem *skAdNetworkVersion = [NSURLQueryItem
                                           queryItemWithName:REQUEST_SKADNETWORK_VERSION_KEY
@@ -148,7 +144,6 @@ NSString * skanVersion = nil;
     [productParameters setObject:@([[responseData objectForKey:RESPONSE_CAMPAIGN_ID_KEY] intValue]) forKey:SKStoreProductParameterAdNetworkCampaignIdentifier];
     [productParameters setObject:@([[responseData objectForKey:RESPONSE_TIMESTAMP_KEY] longLongValue]) forKey:SKStoreProductParameterAdNetworkTimestamp];
     
-
     if (@available(iOS 14, *)) {
         // These product params are only included in SKAdNetwork version 2.0
        
