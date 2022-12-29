@@ -71,7 +71,7 @@ def get_skadnetwork_parameters():
 
     message = SIGNATURE_SEPARATOR.join(fields)
     ecdsa = ECDSA(ECDSA_PRIVATE)
-    signature = ecdsa.sign(message).decode('utf8')
+    signature = ecdsa.sign(message, sigfmt=ECDSA.SIGB64, curve=ECDSA.CURVEP256).decode('utf8')
 
     return jsonify({
         'signature': signature,
