@@ -37,8 +37,8 @@ def get_skadnetwork_parameters():
     nonce = str(uuid.uuid4())
     timestamp = str(int(time.time()*1000))
 
-    sigfmt=ECDSA.SIGB64
-    curve=ECDSA.CURVEP256
+    sigfmt = ECDSA.SIGB64
+    curve = ECDSA.CURVEP256
 
     # In SKAdNetwork Version '1.0' we use less parameters to generate a signature
     if skadnet_version == SKADNETWORK_1_VERSION:
