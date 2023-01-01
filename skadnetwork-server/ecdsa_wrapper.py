@@ -12,7 +12,9 @@ class ECDSA(object):
     """
     a light wrapper around Anton Kueltz's FastECDSA library
     """
-    CURVE = fe_curve.P192
+    CURVEP192 = fe_curve.P192
+    CURVEP256 = fe_curve.P256
+    CURVE = CURVEP256
     SIGRAW = 0   # signature format raw
     SIGB64 = 1   # ...base 64
     SIGHEX = 2   # ...hex
@@ -48,11 +50,12 @@ class ECDSA(object):
         "export the public key only"
         return fe_keys.export_key(s._pubkey, curve=s.CURVE)
 
-    def sign(s, message, sigfmt=None):
+    def sign(s, message, sigfmt=None, curve=None):
         "signs `message` and returns a detached signature"
         if sigfmt is None: sigfmt = s.SIGFMT
+        if curve is None: curve = s.CURVE
         if s._key is None: return None
-        return s._sigencode(fe_ecdsa.sign(message, s._key, curve=s.CURVE, hashfunc=s.HASH), sigfmt)
+        return s._sigencode(fe_ecdsa.sign(message, s._key, curve=curve, hashfunc=s.HASH), sigfmt)
 
     def _sigencode(s, sigrs, sigfmt=None):
         "encode the (r,s) signature"

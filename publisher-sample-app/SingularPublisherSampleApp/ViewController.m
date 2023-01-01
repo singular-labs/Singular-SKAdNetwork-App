@@ -25,6 +25,9 @@ NSString * const REQUEST_SKADNETWORK_VERSION_KEY = @"skadnetwork_version";
 NSString * const REQUEST_SOURCE_APP_ID = @"<ENTER_SOURCE_APP_ID_HERE>";
 NSString * const REQUEST_SKADNETWORK_V1 = @"1.0";
 NSString * const REQUEST_SKADNETWORK_V2 = @"2.0";
+NSString * const REQUEST_SKADNETWORK_V22 = @"2.2";
+NSString * const REQUEST_SKADNETWORK_V3 = @"3.0";
+NSString * const REQUEST_SKADNETWORK_V4 = @"4.0";
 
 // We use http for local tests, use https in production.
 NSString * const REQUEST_AD_SERVER_ADDRESS = @"http://<ENTER_YOU_SERVER_IP_HERE>:8000/get-ad-impression";
@@ -38,9 +41,25 @@ NSString * const RESPONSE_SIGNATURE_KEY = @"signature";
 NSString * const RESPONSE_CAMPAIGN_ID_KEY = @"campaignId";
 NSString * const RESPONSE_TIMESTAMP_KEY = @"timestamp";
 NSString * const RESPONSE_NONCE_KEY = @"nonce";
+NSString * const RESPONSE_SOURCE_IDENTIFIER_KEY = @"sourceIdentifier";
+NSString *skanVersion = nil;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    // skan version depends on OS version. Ad signing defers between skan version.
+    float osVersion = [[[UIDevice currentDevice] systemVersion] floatValue];
+
+    if (osVersion < 14){
+        skanVersion = REQUEST_SKADNETWORK_V1;
+    } else if (osVersion < 14.5){
+        skanVersion = REQUEST_SKADNETWORK_V2;
+    } else if (osVersion < 14.6){
+        skanVersion = REQUEST_SKADNETWORK_V22;
+    } else if (osVersion < 16.1){
+        skanVersion = REQUEST_SKADNETWORK_V3;
+    } else {
+        skanVersion = REQUEST_SKADNETWORK_V4;
+    }
 }
 
 - (IBAction)showAdClick:(id)sender {
@@ -55,26 +74,23 @@ NSString * const RESPONSE_NONCE_KEY = @"nonce";
     NSURLComponents *components = [NSURLComponents componentsWithString:REQUEST_AD_SERVER_ADDRESS];
     NSURLQueryItem *sourceAppId = [NSURLQueryItem queryItemWithName:REQUEST_SOURCE_APP_ID_KEY value:REQUEST_SOURCE_APP_ID];
     
-    // The Ad Network needs to generate different signature according to the SKAdNetwork version.
-    // For OS version below 14.0 we should pass '1.0', and for 14.0 and above we need to pass '2.0'.
-    float osVersion = [[[UIDevice currentDevice] systemVersion] floatValue];
     NSURLQueryItem *skAdNetworkVersion = [NSURLQueryItem
                                           queryItemWithName:REQUEST_SKADNETWORK_VERSION_KEY
-                                          value:osVersion < 14 ? REQUEST_SKADNETWORK_V1 : REQUEST_SKADNETWORK_V2];
+                                          value:skanVersion];
     
-    components.queryItems = @[ skAdNetworkVersion, sourceAppId ];
+    components.queryItems = @[skAdNetworkVersion, sourceAppId];
     
     // Sending an Async GET request to the server to get the Ad data.
     [[[NSURLSession sharedSession] dataTaskWithURL:components.URL
                                  completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        if (error){
+        if (error) {
             return;
         }
         
         // Step 2: Parsing the data that we got from the Ad Network to fit the `loadProductWithParameters` format in the AdController.
-        NSDictionary* productParameters = [self parseResponseDataToProductParameters:data];
+        NSDictionary *productParameters = [self parseResponseDataToProductParameters:data];
         
-        if (!productParameters){
+        if (!productParameters) {
             return;
         }
         
@@ -83,27 +99,27 @@ NSString * const RESPONSE_NONCE_KEY = @"nonce";
     }] resume];
 }
 
-- (void)loadProductFromResponseData:(NSDictionary*)productParameters {
-    if (!productParameters){
+- (void)loadProductFromResponseData:(NSDictionary *)productParameters {
+    if (!productParameters) {
         return;
     }
     
     // Initializing and showing the AdController with the product parameters.
     // Check out the `viewDidLoad` method in the AdController for the next step.
     dispatch_async(dispatch_get_main_queue(), ^{
-        AdController* adController = [[AdController alloc] initWithProductParameters:productParameters];
+        AdController *adController = [[AdController alloc] initWithProductParameters:productParameters];
         [self showViewController:adController sender:self];
     });
 }
 
 // This function take the server's response and convert it to the loadProductWithParameters format.
-- (NSDictionary*)parseResponseDataToProductParameters:(NSData*)data{
+- (NSDictionary *)parseResponseDataToProductParameters:(NSData *)data {
     if (!data){
         return nil;
     }
     
-    NSError* error;
-    NSDictionary* responseData = [[NSMutableDictionary alloc]initWithDictionary:
+    NSError *error;
+    NSDictionary *responseData = [[NSMutableDictionary alloc]initWithDictionary:
                                         [NSJSONSerialization JSONObjectWithData:data
                                                                         options:kNilOptions
                                                                           error:&error]];
@@ -113,10 +129,6 @@ NSString * const RESPONSE_NONCE_KEY = @"nonce";
     }
     
     NSMutableDictionary* productParameters = [[NSMutableDictionary alloc] init];
-    
-    
-    
-    // Don't forget to import <StoreKit/SKAdNetwork.h> to have access to the SKAdnetwork consts
     
     // These product params should be of NSString* type.
     [productParameters setObject:[responseData objectForKey:RESPONSE_SIGNATURE_KEY] forKey:SKStoreProductParameterAdNetworkAttributionSignature];
@@ -128,13 +140,13 @@ NSString * const RESPONSE_NONCE_KEY = @"nonce";
     [productParameters setObject:@([[responseData objectForKey:RESPONSE_TIMESTAMP_KEY] longLongValue]) forKey:SKStoreProductParameterAdNetworkTimestamp];
     
     if (@available(iOS 14, *)) {
-        NSString* skAdNetworkVersion = [responseData objectForKey:RESPONSE_SKADNETWORK_VERSION_KEY];
-        
         // These product params are only included in SKAdNetwork version 2.0
-        if ([skAdNetworkVersion isEqualToString:REQUEST_SKADNETWORK_V2]) {
-            [productParameters setObject:skAdNetworkVersion forKey:SKStoreProductParameterAdNetworkVersion];
-            [productParameters setObject:@([[responseData objectForKey:RESPONSE_SOURCE_APP_ID_KEY] intValue]) forKey:SKStoreProductParameterAdNetworkSourceAppStoreIdentifier];
-        }
+        [productParameters setObject:skanVersion forKey:SKStoreProductParameterAdNetworkVersion];
+        [productParameters setObject:@([[responseData objectForKey:RESPONSE_SOURCE_APP_ID_KEY] intValue]) forKey:SKStoreProductParameterAdNetworkSourceAppStoreIdentifier];
+    }
+	
+    if (@available(iOS 16, *)) {
+    	[productParameters setObject:[NSNumber numberWithInt: [[responseData objectForKey:RESPONSE_SOURCE_IDENTIFIER_KEY] intValue]] forKey:SKStoreProductParameterAdNetworkSourceIdentifier];
     }
     
     // This param has to be of NSUUID type, an exception is thrown if it is passed in NSString* type.
@@ -144,7 +156,7 @@ NSString * const RESPONSE_NONCE_KEY = @"nonce";
 }
 
 - (IBAction)showSingularClick:(id)sender {
-    NSURL* singular = [NSURL URLWithString:@"https://www.singular.net?utm_medium=sample-app&utm_source=sample-app-publisher"];
+    NSURL *singular = [NSURL URLWithString:@"https://www.singular.net?utm_medium=sample-app&utm_source=sample-app-publisher"];
     
     if( [[UIApplication sharedApplication] canOpenURL:singular]){
         [[UIApplication sharedApplication] openURL:singular options:[[NSDictionary alloc] init] completionHandler:nil];
