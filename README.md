@@ -6,7 +6,7 @@ This repo contains:
 2. Publisher sample app
 3. A server that simulates an ad network API (including ad signing)
 
-***Note: to run the sample apps use XCode 12 (currently in beta)***
+***Note: to run the sample apps use XCode 14***
 
 ## How to Use the Advertiser Sample App
 - Open `SingularAdvertiserSampleApp.xcodeproj`
@@ -28,11 +28,9 @@ This repo contains:
 Now you should have a server listening on port 8000 that serves ad network responses to the publisher sample app.
 
 ## How to generate your public-private key pair
-- SKAdNetwork uses an ECDSA keypair with the `prime192v1` curve, generate it by using:\
-`openssl ecparam -name prime192v1 -genkey -noout -out companyname_skadnetwork_private_key.pem`
+- SKAdNetwork uses an ECDSA keypair with the `prime256v1` curve, generate it by using:\
+`openssl ecparam -name prime256v1 -genkey -noout -out companyname_skadnetwork_private_key.pem`
 - For more details see Apple's instructions [Here](https://developer.apple.com/documentation/storekit/skadnetwork/registering_an_ad_network)
-- Apple has changed the instructions regarding Signature Algorithm already twice, therefore make sure the adserver uses the same ECDSA curve than you used for creating the private key
-\
 \
 \
 To learn more about Singular visit: [https://www.singular.net](https://www.singular.net)
