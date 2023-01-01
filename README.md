@@ -6,7 +6,7 @@ This repo contains:
 2. Publisher sample app
 3. A server that simulates an ad network API (including ad signing)
 
-***Note: to run the sample apps use XCode 14***
+***Note: to use SKAN 4 run the sample apps using XCode 14***
 
 ## How to Use the Advertiser Sample App
 - Open `SingularAdvertiserSampleApp.xcodeproj`
