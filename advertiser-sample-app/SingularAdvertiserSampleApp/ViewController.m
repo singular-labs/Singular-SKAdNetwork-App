@@ -24,11 +24,11 @@
 
     if (@available(iOS 16.1, *)) {
         /*set to SKAdNetworkCoarseConversionValueLow, SKAdNetworkCoarseConversionValueMedium or SKAdNetworkCoarseConversionValueHigh */
-        [self setCoarseValue:SKAdNetworkCoarseConversionValueMedium];
+        self.coarseValue = SKAdNetworkCoarseConversionValueMedium;
     }
 
-    [self setFineValue:3]; /*set your fine value here*/
-    [self setLockWindow:NO]; /*set lock window (suggested value is NO)*/
+    self.fineValue = 3; /*set your fine value here*/
+    self.lockWindow = NO; /*set lock window (suggested value is NO)*/
 }
 
 - (IBAction)showTrackingConsentDialog:(id)sender {
@@ -63,9 +63,9 @@
     // Please note that calling `updateConversionValue` is only effective in the first 24 hours since `registerAppForAdNetworkAttribution` is first called.
     // Any calls after 24 hours will not update the conversion value in the attribution notification.
     if (@available(iOS 16.1, *)) {
-        [SKAdNetwork updatePostbackConversionValue:[self fineValue]
-                                       coarseValue:[self coarseValue]
-                                        lockWindow:[self lockWindow]
+        [SKAdNetwork updatePostbackConversionValue:self.fineValue
+                                       coarseValue:self.coarseValue
+                                        lockWindow:self.lockWindow
                                  completionHandler: ^(NSError *_Nullable error) {
             if (error) {
                 [self alertConversionValueError:error];
@@ -74,7 +74,7 @@
             }
         }];
     } else if (@available(iOS 15.4, *)) {
-        [SKAdNetwork updatePostbackConversionValue:[self fineValue]
+        [SKAdNetwork updatePostbackConversionValue:self.fineValue
                                  completionHandler: ^(NSError *_Nullable error) {
             if (error) {
                 [self alertConversionValueError:error];
@@ -83,7 +83,7 @@
             }
         }];
     } else {
-        [SKAdNetwork updateConversionValue:[self fineValue]];
+        [SKAdNetwork updateConversionValue:self.fineValue];
         [self alertConversionValueUpdated];
     }
 }
@@ -101,9 +101,9 @@
         NSString *message = nil;
 
         if (@available(iOS 16.1, *)) {
-            message = [NSString stringWithFormat:@"fine value: %d coarse value: %@ lock window: %@", (int)[self fineValue], [self coarseValue], [self lockWindow] ? @"true" : @"false"];
+            message = [NSString stringWithFormat:@"fine value: %d coarse value: %@ lock window: %@", (int)self.fineValue, self.coarseValue, self.lockWindow ? @"true" : @"false"];
         } else {
-            message = [NSString stringWithFormat:@"value: %d", (int)[self fineValue]];
+            message = [NSString stringWithFormat:@"value: %d", (int)self.fineValue];
         }
 
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Conversion Value Updated!"
