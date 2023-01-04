@@ -10,8 +10,8 @@
 
 @interface ViewController : UIViewController
 
-@property NSInteger fineValue;
-@property SKAdNetworkCoarseConversionValue coarseValue API_AVAILABLE(ios(16.1));
-@property bool lockWindow;
+@property NSInteger fineValue; /* should be an integer between 0-63  */
+@property SKAdNetworkCoarseConversionValue coarseValue API_AVAILABLE(ios(16.1)); 
+@property bool lockWindow; /* should be flase/NO as defualt .*/
 
 @end
