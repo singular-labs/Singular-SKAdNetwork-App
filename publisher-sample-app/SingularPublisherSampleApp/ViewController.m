@@ -145,7 +145,7 @@ NSString *skanVersion = nil;
         [productParameters setObject:@([[responseData objectForKey:RESPONSE_SOURCE_APP_ID_KEY] intValue]) forKey:SKStoreProductParameterAdNetworkSourceAppStoreIdentifier];
     }
 	
-    if (@available(iOS 16, *)) {
+    if (@available(iOS 16.1, *)) {
     	[productParameters setObject:[NSNumber numberWithInt: [[responseData objectForKey:RESPONSE_SOURCE_IDENTIFIER_KEY] intValue]] forKey:SKStoreProductParameterAdNetworkSourceIdentifier];
     }
     
