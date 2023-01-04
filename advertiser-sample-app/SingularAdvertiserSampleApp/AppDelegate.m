@@ -22,7 +22,7 @@
 
     // When the app is opened for the first time and this method is called, it starts a 24-hour timer, any subsequent calls to updateCovnersionValue reset this timer.
     // once the first 24h timer ends, after a randomized period of time the attribution notification will be sent to the ad network.
-    if (@available(iOS 16.1, *)) {
+    if (@available(iOS 15.4, *)) {
     } else {
         [SKAdNetwork registerAppForAdNetworkAttribution];
     }
