@@ -23,12 +23,12 @@
     [super viewDidLoad];
 
     if (@available(iOS 16.1, *)) {
-        /*set to SKAdNetworkCoarseConversionValueLow, SKAdNetworkCoarseConversionValueMedium or SKAdNetworkCoarseConversionValueHigh */
+        /* set to SKAdNetworkCoarseConversionValueLow, SKAdNetworkCoarseConversionValueMedium or SKAdNetworkCoarseConversionValueHigh */
         self.coarseValue = SKAdNetworkCoarseConversionValueMedium;
     }
 
-    self.fineValue = 3; /*set your fine value here*/
-    self.lockWindow = NO; /*set lock window (suggested value is NO)*/
+    self.fineValue = 3; /* set your fine value here */
+    self.lockWindow = NO;
 }
 
 - (IBAction)showTrackingConsentDialog:(id)sender {
@@ -54,14 +54,14 @@
 }
 
 - (IBAction)updateConversionValueClick:(id)sender {
-    // Once `registerAppForAdNetworkAttribution` is called for the first time
+    // For SKAN 3 Once `registerAppForAdNetworkAttribution` is called for the first time
     // (check the AppDelegate.m for explanations on `registerAppForAdNetworkAttribution`),
     // a 24 hours window is opened to update conversion value for attribution data.
-
-    // Using `updateConversionValue` we can add a value (a number between 0-63) to be sent with the attribution notification.
-    // Every time we call this method, we start a new 24 hours window until the notification is sent.
-    // Please note that calling `updateConversionValue` is only effective in the first 24 hours since `registerAppForAdNetworkAttribution` is first called.
-    // Any calls after 24 hours will not update the conversion value in the attribution notification.
+    
+    // In SKAN 4 the behvior changed and supports 3 different time windows, each sending a postback.
+    // while you can call updatePostbackConversionValue function in all time windows, only in the first one you can affect the 'fineConversionValue'
+    // more on that: https://developer.apple.com/documentation/storekit/skadnetwork 
+    // passing YES to lockWindow will signal to the SKAN framework that a postback for the specific time window can be sent and not wait for the time window to pass.
     if (@available(iOS 16.1, *)) {
         [SKAdNetwork updatePostbackConversionValue:self.fineValue
                                        coarseValue:self.coarseValue
@@ -74,6 +74,10 @@
             }
         }];
     } else if (@available(iOS 15.4, *)) {
+    // Using `updateConversionValue` we can add a value (a number between 0-63) to be sent with the attribution notification.
+    // Every time we call this method, we start a new 24 hours window until the notification is sent.
+    // Please note that calling `updateConversionValue` is only effective in the first 24 hours since `registerAppForAdNetworkAttribution` is first called.
+    // Any calls after 24 hours will not update the conversion value in the attribution notification.
         [SKAdNetwork updatePostbackConversionValue:self.fineValue
                                  completionHandler: ^(NSError *_Nullable error) {
             if (error) {
